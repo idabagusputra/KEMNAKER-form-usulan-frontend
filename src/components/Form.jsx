@@ -15,21 +15,54 @@ export default function Form() {
               <h3 className="text-lg font-medium leading-6 text-gray-900">
                 Form Usulan
               </h3>
-              <p className="mt-5 text-md text-gray-600 italic">
-                Keterangan
-              </p>
+              <p className="mt-5 text-md text-gray-600 italic">Keterangan</p>
               <ul>
-                <li className="my-1 text-sm mx-5 text-gray-600">A - <span className="text-gray-500 font-normal">Pembangunan aplikasi baru</span></li>
-                <li className="my-1 text-sm mx-5 text-gray-600">B - <span className="text-gray-500 font-normal">Penambahan fitur baru pada aplikasi</span></li>
-                <li className="my-1 text-sm mx-5 text-gray-600">C - <span className="text-gray-500 font-normal">Pengembangan fitur yang sudah ada</span></li>
-                <li className="my-1 text-sm mx-5 text-gray-600">D - <span className="text-gray-500 font-normal">Integrasi dengan aplikasi internal KEMNAKER</span></li>
-                <li className="my-1 text-sm mx-5 text-gray-600">E - <span className="text-gray-500 font-normal">Integrasi dengan aplikasi eksternal</span></li>
-                <li className="my-1 text-sm mx-5 text-gray-600">F - <span className="text-gray-500 font-normal">Akses database</span></li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  A -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Pembangunan aplikasi baru
+                  </span>
+                </li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  B -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Penambahan fitur baru pada aplikasi
+                  </span>
+                </li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  C -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Pengembangan fitur yang sudah ada
+                  </span>
+                </li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  D -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Integrasi dengan aplikasi internal KEMNAKER
+                  </span>
+                </li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  E -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Integrasi dengan aplikasi eksternal
+                  </span>
+                </li>
+                <li className="my-1 text-sm mx-5 text-gray-600">
+                  F -{" "}
+                  <span className="text-gray-500 font-normal">
+                    Akses database
+                  </span>
+                </li>
               </ul>
             </div>
           </div>
           <div className="mt-5 md:col-span-2 md:mt-0">
-            <form onSubmit={e => {e.preventDefault()}} method="POST">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+              method="POST"
+            >
               <div className="overflow-hidden shadow sm:rounded-md">
                 <div className="bg-white px-4 py-5 sm:p-6">
                   <div className="grid grid-cols-6 gap-6">
@@ -67,18 +100,18 @@ export default function Form() {
                         htmlFor="nama-lengkap"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Nama Lengkap
+                        Nama Pengusul
                       </label>
                       <input
                         type="text"
                         name="nama-lengkap"
                         id="nama-lengkap"
-                        placeholder="Muhammad Salman Alfarisi"
+                        placeholder=". . ."
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm"
                       />
                     </div>
 
-                    <div className="col-span-6 sm:col-span-3">
+                    <div className="col-span-4 sm:col-span-4">
                       <label
                         htmlFor="fitur"
                         className="block text-sm font-medium text-gray-700"
@@ -98,6 +131,21 @@ export default function Form() {
                         <option value="produktivitas">Produktivitas</option>
                         <option value="magang">Magang</option>
                       </select>
+                    </div>
+
+                    <div className="col-span-2 sm:col-span-2">
+                      <label
+                        htmlFor="jumlah"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Jumlah Usulan
+                      </label>
+                      <input
+                        type="number"
+                        name="jumlah"
+                        id="jumlah"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm"
+                      />
                     </div>
 
                     <div className="col-span-6">
