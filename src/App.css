@@ -1,0 +1,17 @@
+#root {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+
+.App {
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  min-height: 100vh; 
+  justify-content: space-between;
+}
+
+.Content {
+padding: 0px;
+}
