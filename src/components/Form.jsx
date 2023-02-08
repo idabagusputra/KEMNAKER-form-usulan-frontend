@@ -1,6 +1,13 @@
+import React, { useState } from "react";
+
 import "../App.css";
 
-export default function Form() {
+function Form() {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    console.log(Object.fromEntries(data.entries()));
+  };
   return (
     <>
       <div className="hidden sm:block" aria-hidden="true">
@@ -57,12 +64,7 @@ export default function Form() {
             </div>
           </div>
           <div className="mt-5 md:col-span-2 md:mt-0">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-              method="POST"
-            >
+            <form onSubmit={handleSubmit}>
               <div className="overflow-hidden shadow sm:rounded-md">
                 <div className="bg-white px-4 py-5 sm:p-6">
                   <div className="grid grid-cols-6 gap-6">
@@ -74,6 +76,7 @@ export default function Form() {
                         UNIT ES. 1
                       </label>
                       <input
+                        required
                         type="text"
                         name="es1"
                         id="es1"
@@ -88,6 +91,7 @@ export default function Form() {
                         UNIT ES. 2
                       </label>
                       <input
+                        required
                         type="text"
                         name="es2"
                         id="es2"
@@ -103,6 +107,7 @@ export default function Form() {
                         Nama Pengusul
                       </label>
                       <input
+                        required
                         type="text"
                         name="nama-lengkap"
                         id="nama-lengkap"
@@ -119,6 +124,7 @@ export default function Form() {
                         Fitur
                       </label>
                       <select
+                        required
                         id="fitur"
                         name="fitur"
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
@@ -141,6 +147,8 @@ export default function Form() {
                         Jumlah Usulan
                       </label>
                       <input
+                        required
+                        min="1"
                         type="number"
                         name="jumlah"
                         id="jumlah"
@@ -156,6 +164,7 @@ export default function Form() {
                         Nama Program
                       </label>
                       <input
+                        required
                         type="text"
                         name="nama-program"
                         id="nama-program"
@@ -171,6 +180,7 @@ export default function Form() {
                         Jenis
                       </label>
                       <select
+                        required
                         id="jenis"
                         name="jenis"
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
@@ -192,6 +202,7 @@ export default function Form() {
                         Usulan
                       </label>
                       <textarea
+                        required
                         name="usulan"
                         id="usulan"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm h-[38px]"
@@ -206,6 +217,7 @@ export default function Form() {
                         Prioritas
                       </label>
                       <select
+                        required
                         id="prioritas"
                         name="prioritas"
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
@@ -236,3 +248,5 @@ export default function Form() {
     </>
   );
 }
+
+export default Form;
