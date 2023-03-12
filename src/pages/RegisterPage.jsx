@@ -4,7 +4,7 @@ import Register from "../components/Register";
 
 const RegisterPage = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center content-center w-full h-full">
       <Register />
     </div>
   );

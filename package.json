@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host --port 3000",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -21,10 +21,14 @@
     "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.0",
+    "react-icons": "^4.8.0",
     "react-pages": "^0.6.30",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
+    "react-select": "^5.7.0",
     "redux": "^4.2.1",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.4",
     "styled-components": "^5.3.8"
   },
   "devDependencies": {
