@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "semantic-ui-react";
 
 function Register() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Register() {
     if (password.length < 6) {
       setMsg("Password must be at least 6 characters");
       console.log(msg);
-      return  0;
+      return 0;
     }
     if (password !== confPassword) {
       setMsg("Passwords do not match");
@@ -35,7 +36,7 @@ function Register() {
       navigate("/");
     } catch (error) {
       if (error.response) {
-        console.log(error.response.data);
+        setMsg(error.response.data.msg);
       }
     }
   };
@@ -46,12 +47,20 @@ function Register() {
           <div className="border-t border-gray-200" />
         </div>
       </div>
-      <div className="m-0 lg:m-[5%] sm:mt-0">
+      <div className="m-[10%] lg:m-[5%] md:m-[20%]  sm:mt-0 lg:w-[50%] w-full content-center">
         <div className="md:grid md:grid-cols-1">
           <div className="mt-5 md:col-span-2 md:mt-0 justify-center">
             <form onSubmit={Register} className="flex justify-center">
               <div className="overflow-hidden shadow sm:rounded-md w-[100%] lg:w-[50%]">
                 <div className="bg-white px-4 py-5 sm:p-6">
+                  <div className="justify-center flex">
+                    {" "}
+                    <img
+                      src="./src/assets/Logo.png"
+                      alt=""
+                      className="w-[20%] h-fit pt-4 pb-6"
+                    />
+                  </div>
                   <div className="grid grid-cols-6 gap-5 lg:gap-6">
                     <div className="col-span-6 sm:col-span-6">
                       <label
@@ -60,12 +69,12 @@ function Register() {
                       >
                         Nama Pengusul
                       </label>
-                      <input
+                      <Input
+                        icon="user"
                         required
                         type="text"
                         name="name"
                         id="name"
-                        placeholder=". . ."
                         onChange={(e) => setName(e.target.value)}
                         value={name}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm"
@@ -79,14 +88,15 @@ function Register() {
                       >
                         Email
                       </label>
-                      <input
+                      <Input
+                        icon="envelope"
                         required
                         type="email"
                         name="email"
                         id="email"
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
-                        placeholder="JohnDoe@gmail.com"
+                        placeholder=""
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm"
                       />
                     </div>
@@ -98,7 +108,8 @@ function Register() {
                       >
                         Password
                       </label>
-                      <input
+                      <Input
+                        icon="lock"
                         required
                         type="password"
                         name="password"
@@ -116,7 +127,8 @@ function Register() {
                       >
                         Konfirmasi Password
                       </label>
-                      <input
+                      <Input
+                      icon="lock open"
                         required
                         type="password"
                         name="confPassword"
@@ -136,7 +148,7 @@ function Register() {
                     type="submit"
                     className="button inline-flex justify-center rounded-md border border-transparent bg-[#192a46] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#243c64] focus:outline-none focus:ring-2 focus:ring-[#495678] focus:ring-offset-2"
                   >
-                    Submit
+                    Daftar
                   </button>
                   <button
                     type="button"

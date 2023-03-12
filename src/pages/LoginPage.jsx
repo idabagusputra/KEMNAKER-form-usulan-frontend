@@ -4,7 +4,7 @@ import Login from "../components/Login";
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center content-center w-full h-full">
       <Login />
     </div>
   );
