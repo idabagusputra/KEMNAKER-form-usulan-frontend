@@ -7,9 +7,15 @@ import { Input, TextArea } from "semantic-ui-react";
 
 function Form() {
   const [firstEchelon, setfirstEchelon] = useState([{ name: "", id: "" }]);
+  const [selectedfirstEchelon, setselectedfirstEchelon] = useState("");
   const [secondEchelon, setsecondEchelon] = useState([{ name: "", id: "" }]);
+  const [namaProgram, setnamaProgram] = useState();
+
   const [proposalType, setproposalType] = useState([{ name: "", code: "" }]);
   const [priorityLevel, setpriorityLevel] = useState([{ name: "", id: "" }]);
+  const [namafitur, setnamafitur] = useState();
+  const [usulan, setusulan] = useState();
+
   const token = localStorage.getItem("token");
 
   const fetchData = async () => {
@@ -37,15 +43,21 @@ function Form() {
     firstEchelon();
   }, []);
 
-  const apisecondEchelon =
-    "https://form-usulan-api.fly.dev/meta/second-echelons";
+  const handlefirstEchelonChange = (event) => {
+    console.log(event.target.value);
+    setselectedfirstEchelon(event.target.value);
+  };
+
+  const apisecondEchelon = `https://form-usulan-api.fly.dev/meta/second-echelons?first_echelon=${selectedfirstEchelon}`;
   useEffect(() => {
-    const secondEchelon = async () => {
-      const { data: res } = await axios.get(apisecondEchelon);
-      setsecondEchelon(res);
-    };
-    secondEchelon();
-  }, []);
+    if (selectedfirstEchelon) {
+      const secondEchelon = async () => {
+        const { data: res } = await axios.get(apisecondEchelon);
+        setsecondEchelon(res);
+      };
+      secondEchelon();
+    }
+  }, [selectedfirstEchelon]);
 
   const apipriorityLevel =
     "https://form-usulan-api.fly.dev/meta/priority-levels";
@@ -66,26 +78,40 @@ function Form() {
     proposalType();
   }, []);
 
-  const handlefirstEchelonChange = (event) => {
-    console.log(event.target.value);
-    setfirstEchelon(event.target.value);
-    setSelectedChild(null);
-  };
-
   const handlesecondEchelonChange = (event) => {
     console.log(event.target.value);
-    secondEchelon(event.target.value);
+    const { id, value } = event.target;
+    const updatedSecondEchelon = secondEchelon.map((item) => {
+      if (item.id === id) {
+        return { ...item, name: value };
+      }
+      return item;
+    });
+    setsecondEchelon(updatedSecondEchelon);
   };
-
-  const filteredsecondEchelon =
-    firstEchelon.find((parent) => parent.id === firstEchelon)?.children || [];
 
   const handlepriorityLevelChange = (event) => {
     console.log(event.target.value);
+    const { id, value } = event.target;
+    const updatedpriorityLevel = priorityLevel.map((item) => {
+      if (item.id === id) {
+        return { ...item, name: value };
+      }
+      return item;
+    });
+    setpriorityLevel(updatedpriorityLevel);
   };
 
   const handleproposalTypeChange = (event) => {
     console.log(event.target.value);
+    const { id, value } = event.target;
+    const updatedproposalType = proposalType.map((item) => {
+      if (item.id === id) {
+        return { ...item, name: value };
+      }
+      return item;
+    });
+    setproposalType(updatedproposalType);
   };
 
   const navigate = useNavigate();
@@ -115,20 +141,25 @@ function Form() {
     },
   ];
 
-  const [formFields, setFormFields] = useState({
-    es1: "",
-    es2: "",
-    namaLengkap: "",
-    fitur: "",
-    namaProgram: "",
-  });
+  const handlenamaProgramChange = (event) => {
+    setnamaProgram(event.target.value);
+  };
 
-  const handleChange = (event) => {
-    setFormFields({ ...formFields, [event.target.name]: event.target.value });
+  const handlenamafiturChange = (event) => {
+    setnamafitur(event.target.value);
+  };
+
+  const handleusulanChange = (event) => {
+    setusulan(event.target.value);
   };
 
   const [usulanFields, setUsulanFields] = useState([
-    { jenis: "", usulan: "", prioritas: "" },
+    {
+      proposalType: [{ name: "", code: "" }],
+      priorityLevel: [{ name: "", id: "" }],
+      namafitur: "",
+      usulan: "",
+    },
   ]);
 
   const handleFormChange = (index, event) => {
@@ -150,9 +181,9 @@ function Form() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const fullData = { ...formFields, usulan: usulanFields };
+    const fullData = { ...namaProgram, usulan: usulanFields };
     if (confirm("Yakin ingin mengirim usulan?")) {
-      setFormFields({
+      setnamaProgram({
         es1: "",
         es2: "",
         namaLengkap: "",
@@ -164,6 +195,27 @@ function Form() {
     } else {
       return false;
     }
+  };
+
+  const a = async () => {
+    const data = {
+      second_echelon_id: secondEchelon,
+      application_name: namaProgram,
+    };
+
+    const response = await axios.post("https://form-usulan-api.fly/forms", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log(responseData);
   };
 
   return (
@@ -209,7 +261,7 @@ function Form() {
                       </label>
                       <select
                         required
-                        value={firstEchelon}
+                        value={selectedfirstEchelon}
                         onChange={handlefirstEchelonChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                       >
@@ -227,9 +279,11 @@ function Form() {
                       >
                         UNIT ES. 2
                       </label>
+
                       <select
                         required
-                        value={secondEchelon}
+                        id={secondEchelon.id}
+                        value={secondEchelon.name}
                         onChange={handlesecondEchelonChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                       >
@@ -244,24 +298,6 @@ function Form() {
                       </select>
                     </div>
 
-                    <div className="col-span-6 sm:col-span-6">
-                      <label
-                        htmlFor="namaLengkap"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Nama Pengusul
-                      </label>
-                      <Input
-                        icon="user"
-                        required
-                        type="text"
-                        name="namaLengkap"
-                        id="namaLengkap"
-                        value={formFields.namaLengkap}
-                        onChange={(event) => handleChange(event)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
-                      />
-                    </div>
                     <div className="col-span-6">
                       <label
                         htmlFor="namaProgram"
@@ -273,9 +309,8 @@ function Form() {
                         required
                         type="text"
                         name="namaProgram"
-                        id="namaProgram"
-                        value={formFields.namaProgram}
-                        onChange={(event) => handleChange(event)}
+                        value={namaProgram}
+                        onChange={handlenamaProgramChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                       />
                     </div>
@@ -291,10 +326,9 @@ function Form() {
                             </label>
                             <select
                               required
-                              value={proposalType}
-                              onChange={(event) =>
-                                handlefirstEchelonChange(event)
-                              }
+                              id={proposalType.id}
+                              value={proposalType.name}
+                              onChange={handleproposalTypeChange}
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                             >
                               {proposalType.map((proposalType) => (
@@ -317,10 +351,8 @@ function Form() {
                             </label>
                             <TextArea
                               required
-                              onChange={(event) =>
-                                handleFormChange(index, event)
-                              }
-                              value={usulanFields.fitur}
+                              onChange={handlenamafiturChange}
+                              value={namafitur}
                               name="fitur"
                               id="fitur"
                               className="mt-1 focus:border-0 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm h-[42px] lg:h-[38px]"
@@ -336,10 +368,9 @@ function Form() {
                             </label>
                             <select
                               required
-                              value={priorityLevel}
-                              onChange={(event) =>
-                                handlepriorityLevelChange(event)
-                              }
+                              id={priorityLevel.id}
+                              value={priorityLevel.name}
+                              onChange={handlepriorityLevelChange}
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                             >
                               {priorityLevel.map((priorityLevel) => (
@@ -362,10 +393,8 @@ function Form() {
                             </label>
                             <TextArea
                               required
-                              onChange={(event) =>
-                                handleFormChange(index, event)
-                              }
-                              value={usulanFields.usulan}
+                              onChange={handleusulanChange}
+                              value={usulan}
                               name="usulan"
                               id="usulan"
                               className="mt-1 focus:border-0 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm h-[42px] lg:h-[38px]"
