@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosHeaders } from "axios";
 import { IoAccessibility } from "react-icons/io5";
@@ -10,25 +10,59 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  useEffect(() => {
+    //check token
+    if (localStorage.getItem("token")) {
+      //redirect page dashboard
+      navigate("/form");
+    }
+  }, []);
+
   const Auth = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(
-        "http://localhost:5000/login",
-        {
-          email: email,
-          password: password,
-        },
-        AxiosHeaders
-      );
-      navigate("/form");
-    } catch (error) {
-      if (error.response) {
-        setMsg(error.response.data.msg);
-        console.log(error.response.data.msg);
-      }
+
+    //initialize formData
+    const formData = new FormData();
+
+    //append data to formData
+    formData.append("email", email);
+    formData.append("password", password);
+
+    //send data to server
+    await axios
+      .post("https://form-usulan-api.fly.dev/auth/login", formData)
+      .then((response) => {
+        //set token on localStorage
+        localStorage.setItem("token", response.data.token);
+
+        //redirect to dashboard
+        navigate("/form");
+      })
+      .catch(error);
+    if (error.response) {
+      setMsg(error.response.data.msg);
+      console.log(error.response.data.msg);
     }
   };
+
+  // e.preventDefault();
+  // try {
+  //   await axios.post(
+  //     "https://form-usulan-api.fly.dev/auth/login",
+  //     {
+  //       email: email,
+  //       password: password,
+  //     },
+  //     AxiosHeaders
+
+  //   );
+  //   navigate("/form");
+  // } catch (error) {
+  //   if (error.response) {
+  //     setMsg(error.response.data.msg);
+  //     console.log(error.response.data.msg);
+  //   }
+  // }
 
   return (
     <>
@@ -81,7 +115,7 @@ function Login() {
                         Password
                       </label>
                       <Input
-                      icon="lock"
+                        icon="lock"
                         required
                         type="password"
                         name="password"

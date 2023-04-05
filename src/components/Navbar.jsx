@@ -1,11 +1,23 @@
 import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import { RiLogoutCircleRLine } from "react-icons/ri";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const Logout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
+    axios
+      .delete("https://form-usulan-api.fly.dev/auth/logout", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Pass the token in the Authorization header
+        },
+      })
+      .then(() => {
+        localStorage.removeItem("token"); // Remove the token from local storage
+        navigate("/"); // Redirect the user to the login page
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -22,7 +34,9 @@ const Navbar = () => {
         type="button"
         onClick={Logout}
         className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-slate-600 hover:text-gray-700 transition-all w-fit h-fit"
-      ><RiLogoutCircleRLine className="w-[40px] h-[40px] hover:scale-110"/></button>
+      >
+        <RiLogoutCircleRLine className="w-[40px] h-[40px] hover:scale-110" />
+      </button>
     </div>
   );
 };

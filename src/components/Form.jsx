@@ -1,15 +1,92 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 import "../App.css";
 import { Input, TextArea } from "semantic-ui-react";
 
 function Form() {
-  const [name, setName] = useState("");
-  const [token, setToken] = useState("");
-  const [expire, setExpire] = useState("");
+  const [firstEchelon, setfirstEchelon] = useState([{ name: "", id: "" }]);
+  const [secondEchelon, setsecondEchelon] = useState([{ name: "", id: "" }]);
+  const [proposalType, setproposalType] = useState([{ name: "", code: "" }]);
+  const [priorityLevel, setpriorityLevel] = useState([{ name: "", id: "" }]);
+  const token = localStorage.getItem("token");
+
+  const fetchData = async () => {
+    //set axios header dengan type Authorization + Bearer token
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  };
+
+  useEffect(() => {
+    //check token empty
+    if (!token) {
+      //redirect login page
+      navigate("/");
+    }
+
+    //call function "fetchData"
+    fetchData();
+  }, []);
+
+  const apifisrtEchelon = "https://form-usulan-api.fly.dev/meta/first-echelons";
+  useEffect(() => {
+    const firstEchelon = async () => {
+      const { data: res } = await axios.get(apifisrtEchelon);
+      setfirstEchelon(res);
+    };
+    firstEchelon();
+  }, []);
+
+  const apisecondEchelon =
+    "https://form-usulan-api.fly.dev/meta/second-echelons";
+  useEffect(() => {
+    const secondEchelon = async () => {
+      const { data: res } = await axios.get(apisecondEchelon);
+      setsecondEchelon(res);
+    };
+    secondEchelon();
+  }, []);
+
+  const apipriorityLevel =
+    "https://form-usulan-api.fly.dev/meta/priority-levels";
+  useEffect(() => {
+    const priorityLevel = async () => {
+      const { data: res } = await axios.get(apipriorityLevel);
+      setpriorityLevel(res);
+    };
+    priorityLevel();
+  }, []);
+
+  const apiproposalType = "https://form-usulan-api.fly.dev/meta/proposal-types";
+  useEffect(() => {
+    const proposalType = async () => {
+      const { data: res } = await axios.get(apiproposalType);
+      setproposalType(res);
+    };
+    proposalType();
+  }, []);
+
+  const handlefirstEchelonChange = (event) => {
+    console.log(event.target.value);
+    setfirstEchelon(event.target.value);
+    setSelectedChild(null);
+  };
+
+  const handlesecondEchelonChange = (event) => {
+    console.log(event.target.value);
+    secondEchelon(event.target.value);
+  };
+
+  const filteredsecondEchelon =
+    firstEchelon.find((parent) => parent.id === firstEchelon)?.children || [];
+
+  const handlepriorityLevelChange = (event) => {
+    console.log(event.target.value);
+  };
+
+  const handleproposalTypeChange = (event) => {
+    console.log(event.target.value);
+  };
 
   const navigate = useNavigate();
 
@@ -38,37 +115,6 @@ function Form() {
     },
   ];
 
-  useEffect(() => {
-    refreshToken();
-  }, []);
-
-  const refreshToken = async () => {
-    try {
-      console.log("refreshing token");
-    } catch (error) {
-      if (error.response) {
-        console.log(error.response.data.msg);
-      }
-    }
-  };
-  const axiosJWT = axios.create();
-
-  axiosJWT.interceptors.request.use(
-    async (config) => {
-      const currentDate = new Date();
-      if (expire * 1000 < currentDate.getTime()) {
-        const response = await axios.get("http://localhost:5000/token");
-        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-        setToken(response.data.accessToken);
-        const decoded = jwt_decode(response.data.accessToken);
-        setExpire(decoded.exp);
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
   const [formFields, setFormFields] = useState({
     es1: "",
     es2: "",
@@ -161,15 +207,18 @@ function Form() {
                       >
                         UNIT ES. 1
                       </label>
-                      <Input
+                      <select
                         required
-                        type="text"
-                        name="es1"
-                        id="es1"
-                        onChange={(event) => handleChange(event)}
-                        value={formFields.es1}
+                        value={firstEchelon}
+                        onChange={handlefirstEchelonChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
-                      />
+                      >
+                        {firstEchelon.map((firstEchelon) => (
+                          <option key={firstEchelon.id} value={firstEchelon.id}>
+                            {firstEchelon.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-span-3 sm:col-span-3">
                       <label
@@ -178,15 +227,21 @@ function Form() {
                       >
                         UNIT ES. 2
                       </label>
-                      <Input
+                      <select
                         required
-                        type="text"
-                        name="es2"
-                        id="es2"
-                        value={formFields.es2}
-                        onChange={(event) => handleChange(event)}
+                        value={secondEchelon}
+                        onChange={handlesecondEchelonChange}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
-                      />
+                      >
+                        {secondEchelon.map((secondEchelon) => (
+                          <option
+                            key={secondEchelon.id}
+                            value={secondEchelon.id}
+                          >
+                            {secondEchelon.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="col-span-6 sm:col-span-6">
@@ -207,33 +262,6 @@ function Form() {
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                       />
                     </div>
-
-                    <div className="col-span-6 sm:col-span-6">
-                      <label
-                        htmlFor="fitur"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Fitur
-                      </label>
-                      <select
-                        required
-                        id="fitur"
-                        name="fitur"
-                        value={formFields.fitur}
-                        onChange={(event) => handleChange(event)}
-                        className=" mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
-                      >
-                        <option disabled selected></option>
-                        <option value="proglat">Proglat</option>
-                        <option value="etraining">E-Training</option>
-                        <option value="sintala">Sintala</option>
-                        <option value="akreditasi">Akreditasi</option>
-                        <option value="kelembagaan">Kelembagaan</option>
-                        <option value="produktivitas">Produktivitas</option>
-                        <option value="magang">Magang</option>
-                      </select>
-                    </div>
-
                     <div className="col-span-6">
                       <label
                         htmlFor="namaProgram"
@@ -263,27 +291,71 @@ function Form() {
                             </label>
                             <select
                               required
+                              value={proposalType}
                               onChange={(event) =>
-                                handleFormChange(index, event)
+                                handlefirstEchelonChange(event)
                               }
-                              id="jenis"
-                              value={usulanFields.jenis}
-                              name="jenis"
-                              className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
                             >
-                              <option disabled selected></option>
-                              <option>A</option>
-                              <option>B</option>
-                              <option>C</option>
-                              <option>D</option>
-                              <option>E</option>
-                              <option>F</option>
+                              {proposalType.map((proposalType) => (
+                                <option
+                                  key={proposalType.id}
+                                  value={proposalType.id}
+                                >
+                                  {proposalType.code}
+                                </option>
+                              ))}
                             </select>
                           </div>
 
                           <div className="col-span-4 lg:col-span-4">
                             <label
-                              htmlFor="usulan"
+                              htmlFor="fitur"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Nama Fitur
+                            </label>
+                            <TextArea
+                              required
+                              onChange={(event) =>
+                                handleFormChange(index, event)
+                              }
+                              value={usulanFields.fitur}
+                              name="fitur"
+                              id="fitur"
+                              className="mt-1 focus:border-0 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm h-[42px] lg:h-[38px]"
+                            />
+                          </div>
+
+                          <div className="col-span-1 lg:col-span-1">
+                            <label
+                              htmlFor="prioritas"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Prioritas
+                            </label>
+                            <select
+                              required
+                              value={priorityLevel}
+                              onChange={(event) =>
+                                handlepriorityLevelChange(event)
+                              }
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm  sm:text-sm"
+                            >
+                              {priorityLevel.map((priorityLevel) => (
+                                <option
+                                  key={priorityLevel.id}
+                                  value={priorityLevel.id}
+                                >
+                                  {priorityLevel.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="col-span-6 lg:col-span-6">
+                            <label
+                              htmlFor="usulann"
                               className="block text-sm font-medium text-gray-700"
                             >
                               Usulan
@@ -300,29 +372,6 @@ function Form() {
                             />
                           </div>
 
-                          <div className="col-span-1 lg:col-span-1">
-                            <label
-                              htmlFor="prioritas"
-                              className="block text-sm font-medium text-gray-700"
-                            >
-                              Prioritas
-                            </label>
-                            <select
-                              required
-                              onChange={(event) =>
-                                handleFormChange(index, event)
-                              }
-                              id="prioritas"
-                              name="prioritas"
-                              value={usulanFields.prioritas}
-                              className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-[#495678] focus:outline-none focus:ring-[#495678] sm:text-sm"
-                            >
-                              <option disabled selected></option>
-                              <option>HP - High Priority</option>
-                              <option>MP - Middle Priority</option>
-                              <option>LP - Low Priority</option>
-                            </select>
-                          </div>
                           <div className="col-span-1 lg:ml-5 ml-0 lg:col-span-1  ">
                             <button
                               type="button"

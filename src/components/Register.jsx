@@ -8,7 +8,7 @@ function Register() {
   const [msg, setMsg] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confPassword, setConfPassword] = useState("");
+  const [password_confirmation, setpassword_confirmation] = useState("");
   const [name, setName] = useState("");
 
   const back = () => {
@@ -22,16 +22,16 @@ function Register() {
       console.log(msg);
       return 0;
     }
-    if (password !== confPassword) {
+    if (password !== password_confirmation) {
       setMsg("Passwords do not match");
       console.log(msg);
     }
     try {
-      await axios.post("http://localhost:5000/users", {
+      await axios.post("https://form-usulan-api.fly.dev/auth/register", {
         name: name,
         email: email,
         password: password,
-        confPassword: confPassword,
+        password_confirmation: password_confirmation,
       });
       navigate("/");
     } catch (error) {
@@ -122,19 +122,21 @@ function Register() {
 
                     <div className="col-span-6 sm:col-span-6">
                       <label
-                        htmlFor="confPassword"
+                        htmlFor="password_confirmation"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Konfirmasi Password
                       </label>
                       <Input
-                      icon="lock open"
+                        icon="lock open"
                         required
                         type="password"
-                        name="confPassword"
-                        id="confPassword"
-                        onChange={(e) => setConfPassword(e.target.value)}
-                        value={confPassword}
+                        name="password_confirmation"
+                        id="password_confirmation"
+                        onChange={(e) =>
+                          setpassword_confirmation(e.target.value)
+                        }
+                        value={password_confirmation}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#495678] focus:ring-[#495678] sm:text-sm"
                       />
                     </div>
